@@ -14,6 +14,8 @@
 #include "Logger.h"
 #include "Reactor.h"
 
+#define BUFFER_SIZE 1024
+
 int ListenHandler::Read()
 {
     struct sockaddr_in addr;
@@ -38,6 +40,16 @@ int ListenHandler::Error()
 
 int SocketHandler::Read()
 {
+    log->info("start to read\n");
+    char buf[BUFFER_SIZE];
+    memset(buf, '\0', BUFFER_SIZE);
+    int ret = recv(hd, buf, BUFFER_SIZE-1, 0);
+    if (ret <= 0) {
+        close(hd);
+        log->info("socket error");
+        return -1;
+    }
+    log->info("get %d bytes of content: %s\n", ret, buf);
     return 0;
 }
 

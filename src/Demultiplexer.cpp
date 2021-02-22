@@ -58,9 +58,12 @@ int EpollDemultiplexer::Dispath(std::map<Handle, EventHandler*>& hd2EvHdr)
             continue;
         }
         if (events[i].events & EPOLLIN) {            
-            handler->Read();
+            ret = handler->Read();
         } else if (events[i].events & EPOLLOUT) {
-            handler->Write();
+            ret = handler->Write();
+        }
+        if (ret < 0) {
+            return -1;
         }
     }
     return 0;
